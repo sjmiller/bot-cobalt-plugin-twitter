@@ -1,0 +1,67 @@
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Bot::Cobalt::Plugin::Twitter - Bot::Cobalt plugin for automatic tweeting
+
+=head1 VERSION
+
+version 0.001
+
+=head1 SYNOPSIS
+
+   ## In plugins.conf
+   Twitter:
+      Module: Bot::Cobalt::Plugin::Twitter
+      Config: plugins/twitter.conf
+      Opts:
+         retweet_tweets: 0
+         tweet_links: 0
+         tweet_topics: 1
+
+   ## In plugins/twitter.conf
+   ---
+   consumer_key:        <twitter consumer key>
+   consumer_secret:     <twitter consumer secret>
+   access_token:        <twitter access token>
+   access_token_secret: <twitter access token secret>
+
+=head1 DESCRIPTION
+
+A L<Bot::Cobalt> plugin.
+
+This plugin does a handful of twitter-related functions.
+
+=over 4
+
+=item tweet_links (default: off)
+
+Whenever a link is tweeted, tweet it (with title).
+
+=item retweet_tweets (default: off)
+
+Whenever a tweet is linked, retweet it.
+
+=item tweet_topics (default: on)
+
+Whenever a topic changes, tweet it.
+
+=item !tweet
+
+Finally a command, !tweet that will tweet the message you provide it.
+
+=back
+
+=head1 AUTHOR
+
+Scott Miller <scott.j.miller@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Scott Miller.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
