@@ -9,7 +9,7 @@ use Bot::Cobalt::Common;
 
 use HTML::Entities    qw(decode_entities);
 use Mojo::UserAgent;
-use Net::Twitter;
+use Twitter::API;
 use Text::Unidecode   qw(unidecode);
 use URI::Find::Simple qw(list_uris);
 
@@ -36,18 +36,17 @@ sub Cobalt_register {
    $self->{useragent}      = Mojo::UserAgent->new;
 
    eval {
-      $self->{twitter} = Net::Twitter->new(
-         traits              => [ qw(API::RESTv1_1 RetryOnError) ],
+      $self->{twitter} = Twitter::API->new_with_traits(
+         traits              => 'Enchilada',
          consumer_key        => $conf->{consumer_key},
          consumer_secret     => $conf->{consumer_secret},
          access_token        => $conf->{access_token},
          access_token_secret => $conf->{access_token_secret},
-         ssl                 => 1,
       );      
    };
 
    if (my $err = $@) {
-      logger->warn("Unable to create Net::Twitter object: $err");
+      logger->warn("Unable to create Twitter::API object: $err");
    }
 
    register( $self, 'SERVER', qw(public_msg public_cmd_tweet topic_changed) );
@@ -126,8 +125,8 @@ sub Bot_public_msg {
          }
          
          if ($self->display_tweets) {   
-            my $tweet = $self->twitter->show_status($id);
-            my $text  = $tweet->{text};
+            my $tweet = $self->twitter->show_status($id, { tweet_mode => 'extended' });
+            my $text  = $tweet->{truncated} ? $tweet->{text} : $tweet->{full_text};
             my $name  = $tweet->{user}->{name};
             my $sname = $tweet->{user}->{screen_name};
             my $user  = sprintf '%s (@%s)', $name, $sname;
@@ -153,10 +152,6 @@ sub Bot_public_msg {
          
          next if not $title;
 
-         # my $title = decode_entities( 
-         #     $ua->get($uri)->result->dom->at('title')->text 
-         # ) or next;       
-         
          if (length($short) < length($uni)) {
             $short = "$short...";
          }
